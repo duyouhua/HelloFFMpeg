@@ -80,6 +80,7 @@ void decoder::initialize(enum AVPixelFormat format) {
     //pixelFormat = AV_PIX_FMT_RGB565LE;
     //pixelFormat = AV_PIX_FMT_BGR24;
     pixelFormat = format;
+    LOGI("initialized")
 }
 
 int decoder::decodeFrame(const char *data, int length, void (*handle_data)(AVFrame *pFrame, void *param, void *ctx), void *ctx) {
