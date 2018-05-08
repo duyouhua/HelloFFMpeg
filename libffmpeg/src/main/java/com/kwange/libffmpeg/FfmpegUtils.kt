@@ -1,4 +1,4 @@
-package coding.yu.helloffmpeg
+package com.kwange.libffmpeg
 
 import android.view.Surface
 
@@ -11,9 +11,10 @@ object FfmpegUtils {
 
     external fun release(decoder: Long)
 
-    external fun getDecoder():Long
+    external fun getDecoder(): Long
 
-    external fun decodeStream(data:ByteArray,length:Int,decoder:Long,surface:Surface)
+    external fun decodeFrame(data: ByteArray, length: Int, decoder: Long, surface: Surface)
 
 
 }
+

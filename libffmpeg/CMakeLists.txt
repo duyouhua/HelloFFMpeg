@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-set(FFMPEG_HOME ${CMAKE_SOURCE_DIR}/../ffmpeg)
+set(FFMPEG_HOME ${CMAKE_SOURCE_DIR})
 
 add_library( # Sets the name of the library.
              native-lib
@@ -19,7 +19,7 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/native-lib.cpp )
+             ${FFMPEG_HOME}/src/main/cpp/native-lib.cpp )
 
 add_library( # Sets the name of the library.
              decoder
@@ -28,7 +28,7 @@ add_library( # Sets the name of the library.
              STATIC
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/decoder.cpp )
+             ${FFMPEG_HOME}/src/main/cpp/decoder.cpp )
 
 add_library( # Sets the name of the library.
              yuv_2_rgb
@@ -37,7 +37,7 @@ add_library( # Sets the name of the library.
              STATIC
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/yuv_2_rgb.cpp )
+             ${FFMPEG_HOME}/src/main/cpp/yuv_2_rgb.cpp )
 
 add_library( # Sets the name of the library.
              android_native_window
@@ -46,7 +46,7 @@ add_library( # Sets the name of the library.
              STATIC
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/android_native_window.cpp )
+             ${FFMPEG_HOME}/src/main/cpp/android_native_window.cpp )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -121,6 +121,8 @@ target_link_libraries( # Specifies the target library.
                        native-lib
                        decoder
                        yuv_2_rgb
+                       -landroid
+                       android_native_window
                        avcodec
                        avdevice
                        avfilter

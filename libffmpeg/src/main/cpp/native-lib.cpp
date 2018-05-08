@@ -32,7 +32,7 @@ void handleData(AVFrame *pFrame, void *param, void *ctx) {
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_coding_yu_helloffmpeg_FfmpegUtils_stringFromJNI(JNIEnv *env, jobject instance) {
+Java_com_kwange_libffmpeg_FfmpegUtils_stringFromJNI(JNIEnv *env, jobject instance) {
     std::string hello = "Hello from C++";
     return env->NewStringUTF(hello.c_str());
 }
@@ -40,28 +40,28 @@ Java_coding_yu_helloffmpeg_FfmpegUtils_stringFromJNI(JNIEnv *env, jobject instan
 //关闭解码器释放资源
 extern "C"
 JNIEXPORT void JNICALL
-Java_coding_yu_helloffmpeg_FfmpegUtils_release(JNIEnv *env, jobject instance, jlong this_obj_long) {
-    decoder *decoder = reinterpret_cast<decoder *>(this_obj_long);
-    decoder->close();
-    delete (decoder);
+Java_com_kwange_libffmpeg_FfmpegUtils_release(JNIEnv *env, jobject instance, jlong this_obj_long) {
+    decoder *p = reinterpret_cast<decoder *>(this_obj_long);
+    p->close();
+    delete (p);
 }
 
 //获取解码器
 extern "C"
 JNIEXPORT long JNICALL
-Java_coding_yu_helloffmpeg_FfmpegUtils_getDecoder(JNIEnv *env, jobject instance) {
-    decoder *decoder = new decoder();
-    decoder->initialize(AV_PIX_FMT_VDPAU_H264);
-    return reinterpret_cast<long>(decoder);
+Java_com_kwange_libffmpeg_FfmpegUtils_getDecoder(JNIEnv *env, jobject instance) {
+    decoder *p = new decoder();
+    p->initialize(AV_PIX_FMT_VDPAU_H264);
+    return reinterpret_cast<long>(p);
 }
 
 //解码数据并显示
 extern "C"
 JNIEXPORT void JNICALL
-Java_coding_yu_helloffmpeg_FfmpegUtils_deoodeFrame(JNIEnv *env, jobject instance, jbyteArray data,
+Java_com_kwange_libffmpeg_FfmpegUtils_decodeFrame(JNIEnv *env, jobject instance, jbyteArray data,
                                                    jint length, jlong this_obj_long,
                                                    jobject surface) {
-    decoder *decoder = reinterpret_cast<decoder *>(this_obj_long);
+    decoder *p = reinterpret_cast<decoder *>(this_obj_long);
     jbyte *cdata = env->GetByteArrayElements(data, JNI_FALSE);
     jbyte *cdata_rec = cdata;
     if (cdata != NULL) {
@@ -80,7 +80,7 @@ Java_coding_yu_helloffmpeg_FfmpegUtils_deoodeFrame(JNIEnv *env, jobject instance
             } else {
                 break;
             }
-            decoder->decodeFrame(reinterpret_cast<const char *>(cdata), len, handleData, &package);
+            p->decodeFrame(reinterpret_cast<const char *>(cdata), len, handleData, &package);
         }
     } else {
 
