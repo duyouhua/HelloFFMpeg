@@ -30,6 +30,24 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/decoder.cpp )
 
+add_library( # Sets the name of the library.
+             yuv_2_rgb
+
+             # Sets the library as a shared library.
+             STATIC
+
+             # Provides a relative path to your source file(s).
+             src/main/cpp/yuv_2_rgb.cpp )
+
+add_library( # Sets the name of the library.
+             android_native_window
+
+             # Sets the library as a shared library.
+             STATIC
+
+             # Provides a relative path to your source file(s).
+             src/main/cpp/android_native_window.cpp )
+
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
@@ -102,6 +120,7 @@ include_directories(${FFMPEG_HOME}/include/)
 target_link_libraries( # Specifies the target library.
                        native-lib
                        decoder
+                       yuv_2_rgb
                        avcodec
                        avdevice
                        avfilter

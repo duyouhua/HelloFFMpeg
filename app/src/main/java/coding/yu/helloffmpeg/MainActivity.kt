@@ -10,8 +10,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        sample_text.text = FfmpegUtils.instance().stringFromJNI()
-        FfmpegUtils.instance().initialize()
+        sample_text.text = FfmpegUtils.getDecoder().toString()
     }
 
 
