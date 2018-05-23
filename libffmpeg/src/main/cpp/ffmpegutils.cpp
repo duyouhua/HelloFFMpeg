@@ -6,11 +6,13 @@ void render(AVPacket *packet) {
     if (ret == 0) {
         ret = avcodec_receive_frame(m_pCodecCtx, m_pYUVFrame);
         if (ret == 0) {
-
             // Determine required buffer size and allocate buffer
-            int numBytes = av_image_get_buffer_size(AV_PIX_FMT_RGBA, m_pCodecCtx->width,
-                                                    m_pCodecCtx->height, 1);
-            buffer = (uint8_t *) av_malloc(numBytes * sizeof(uint8_t));
+            if (buffer == NULL) {
+                int numBytes = av_image_get_buffer_size(AV_PIX_FMT_RGBA, m_pCodecCtx->width,
+                                                        m_pCodecCtx->height, 1);
+                buffer = (uint8_t *) av_malloc(numBytes * sizeof(uint8_t));
+            }
+
             av_image_fill_arrays(m_pRGBAFrame->data, m_pRGBAFrame->linesize, buffer,
                                  AV_PIX_FMT_RGBA,
                                  m_pCodecCtx->width, m_pCodecCtx->height, 1);
@@ -18,16 +20,17 @@ void render(AVPacket *packet) {
 
 
             // 由于解码出来的帧格式不是RGBA的,在渲染之前需要进行格式转换
-            sws_ctx = sws_getContext(m_pCodecCtx->width,
-                                     m_pCodecCtx->height,
-                                     m_pCodecCtx->pix_fmt,
-                                     m_pCodecCtx->width,
-                                     m_pCodecCtx->height,
-                                     AV_PIX_FMT_RGBA,
-                                     SWS_BILINEAR,
-                                     NULL,
-                                     NULL,
-                                     NULL);
+            if (sws_ctx == NULL)
+                sws_ctx = sws_getContext(m_pCodecCtx->width,
+                                         m_pCodecCtx->height,
+                                         m_pCodecCtx->pix_fmt,
+                                         m_pCodecCtx->width,
+                                         m_pCodecCtx->height,
+                                         AV_PIX_FMT_RGBA,
+                                         SWS_BILINEAR,
+                                         NULL,
+                                         NULL,
+                                         NULL);
 
             ANativeWindow_lock(mNativeWindow, &mWindwoBuffer, 0);
 
@@ -48,7 +51,6 @@ void render(AVPacket *packet) {
             for (h = 0; h < height; h++) {
                 memcpy(dst + h * dstStride, src + h * srcStride, srcStride);
             }
-            delete(buffer);
             ANativeWindow_unlockAndPost(mNativeWindow);
         } else if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
             return;
@@ -126,7 +128,7 @@ jboolean Java_com_chenxi1991_libffmpeg_FfmpegUtils_init(JNIEnv *env, jobject ins
 
 jboolean
 Java_com_chenxi1991_libffmpeg_FfmpegUtils_parse(JNIEnv *env, jobject instance, jbyteArray pBuff,
-                                            int size) {
+                                                int size) {
     jbyte *jBuff = (env->GetByteArrayElements(pBuff, 0));
     uint8_t *buff = (uint8_t *) jBuff;
     uint64_t pts = 0;
@@ -155,6 +157,9 @@ jboolean Java_com_chenxi1991_libffmpeg_FfmpegUtils_release(JNIEnv *env, jobject 
     if (mNativeWindow) {
         mNativeWindow = NULL;
     }
+    if (buffer) {
+        delete (buffer);
+    }
     av_free(m_pYUVFrame);
     av_free(m_pRGBAFrame);
     av_free(m_pCodecCtx);
@@ -164,7 +169,8 @@ jboolean Java_com_chenxi1991_libffmpeg_FfmpegUtils_release(JNIEnv *env, jobject 
 
 
 void
-Java_com_chenxi1991_libffmpeg_FfmpegUtils_setSurface(JNIEnv *env, jobject instance, jobject jsurface) {
+Java_com_chenxi1991_libffmpeg_FfmpegUtils_setSurface(JNIEnv *env, jobject instance,
+                                                     jobject jsurface) {
     mNativeWindow = ANativeWindow_fromSurface(env, jsurface);
 }
 

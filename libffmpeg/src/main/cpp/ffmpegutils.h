@@ -33,8 +33,8 @@ AVCodecContext *m_pCodecCtx;
 AVCodec *m_pAVCodec;
 AVCodecParserContext *m_pCodecPaser;
 
-uint8_t *buffer;
-struct SwsContext *sws_ctx;
+uint8_t *buffer = NULL;
+struct SwsContext *sws_ctx = NULL;
 
 //FIX
 struct URLProtocol;
@@ -56,7 +56,7 @@ Java_com_chenxi1991_libffmpeg_FfmpegUtils_init(JNIEnv *env, jobject instance);
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_chenxi1991_libffmpeg_FfmpegUtils_parse(JNIEnv *env, jobject instance, jbyteArray pBuff,
-                                            int size);
+                                                int size);
 
 extern "C"
 JNIEXPORT jboolean JNICALL
@@ -64,4 +64,5 @@ Java_com_chenxi1991_libffmpeg_FfmpegUtils_release(JNIEnv *env, jobject instance)
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_chenxi1991_libffmpeg_FfmpegUtils_setSurface(JNIEnv *env, jobject instance, jobject jsurface);
+Java_com_chenxi1991_libffmpeg_FfmpegUtils_setSurface(JNIEnv *env, jobject instance,
+                                                     jobject jsurface);
