@@ -1,2 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kwange.libffmpeg" />
+<manifest package="com.chenxi1991.libffmpeg" />

@@ -13,53 +13,19 @@ cmake_minimum_required(VERSION 3.4.1)
 set(FFMPEG_HOME ${CMAKE_SOURCE_DIR})
 
 add_library( # Sets the name of the library.
-             native-lib
+             ffmpegutils
 
              # Sets the library as a shared library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             ${FFMPEG_HOME}/src/main/cpp/native-lib.cpp )
-
-add_library( # Sets the name of the library.
-             decoder
-
-             # Sets the library as a shared library.
-             STATIC
-
-             # Provides a relative path to your source file(s).
-             ${FFMPEG_HOME}/src/main/cpp/decoder.cpp )
-
-add_library( # Sets the name of the library.
-             yuv_2_rgb
-
-             # Sets the library as a shared library.
-             STATIC
-
-             # Provides a relative path to your source file(s).
-             ${FFMPEG_HOME}/src/main/cpp/yuv_2_rgb.cpp )
-
-add_library( # Sets the name of the library.
-             android_native_window
-
-             # Sets the library as a shared library.
-             STATIC
-
-             # Provides a relative path to your source file(s).
-             ${FFMPEG_HOME}/src/main/cpp/android_native_window.cpp )
+             ${FFMPEG_HOME}/src/main/cpp/ffmpegutils.cpp )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
 # you want to add. CMake verifies that the library exists before
 # completing its build.
-
-find_library( # Sets the name of the path variable.
-              log-lib
-
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
 
 # Import ffmpeg part
 add_library( avcodec
@@ -111,6 +77,13 @@ set_target_properties( swscale
                        PROPERTIES IMPORTED_LOCATION
                        ${FFMPEG_HOME}/libs/${ANDROID_ABI}/libswscale-4.so )
 
+add_library( SDL2
+             SHARED
+             IMPORTED )
+set_target_properties( SDL2
+                       PROPERTIES IMPORTED_LOCATION
+                       ${FFMPEG_HOME}/libs/${ANDROID_ABI}/libSDL2.so )
+
 include_directories(${FFMPEG_HOME}/include/)
 
 # Specifies libraries CMake should link to your target library. You
@@ -118,11 +91,8 @@ include_directories(${FFMPEG_HOME}/include/)
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       native-lib
-                       decoder
-                       yuv_2_rgb
-                       -landroid
-                       android_native_window
+                       ffmpegutils
+                       android
                        avcodec
                        avdevice
                        avfilter
@@ -130,7 +100,7 @@ target_link_libraries( # Specifies the target library.
                        avutil
                        swresample
                        swscale
-
+                       SDL2
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )

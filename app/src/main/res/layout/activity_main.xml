@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="coding.yu.helloffmpeg.MainActivity">
+    tools:context="com.chenxi1991.helloffmpeg.MainActivity">
 
     <TextView
         android:id="@+id/sample_text"
