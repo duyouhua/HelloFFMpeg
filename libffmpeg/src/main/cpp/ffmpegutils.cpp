@@ -7,11 +7,10 @@ void render(AVPacket *packet) {
         ret = avcodec_receive_frame(m_pCodecCtx, m_pYUVFrame);
         if (ret == 0) {
             // Determine required buffer size and allocate buffer
-            if (buffer == NULL) {
-                int numBytes = av_image_get_buffer_size(AV_PIX_FMT_RGBA, m_pCodecCtx->width,
-                                                        m_pCodecCtx->height, 1);
-                buffer = (uint8_t *) av_malloc(numBytes * sizeof(uint8_t));
-            }
+            int numBytes = av_image_get_buffer_size(AV_PIX_FMT_RGBA, m_pCodecCtx->width,
+                                                    m_pCodecCtx->height, 1);
+            uint8_t *buffer = (uint8_t *) av_malloc(numBytes * sizeof(uint8_t));
+
 
             av_image_fill_arrays(m_pRGBAFrame->data, m_pRGBAFrame->linesize, buffer,
                                  AV_PIX_FMT_RGBA,
@@ -52,6 +51,7 @@ void render(AVPacket *packet) {
                 memcpy(dst + h * dstStride, src + h * srcStride, srcStride);
             }
             ANativeWindow_unlockAndPost(mNativeWindow);
+            delete (buffer);
         } else if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
             return;
         } else {
@@ -156,9 +156,6 @@ jboolean Java_com_chenxi1991_libffmpeg_FfmpegUtils_release(JNIEnv *env, jobject 
     }
     if (mNativeWindow) {
         mNativeWindow = NULL;
-    }
-    if (buffer) {
-        delete (buffer);
     }
     av_free(m_pYUVFrame);
     av_free(m_pRGBAFrame);

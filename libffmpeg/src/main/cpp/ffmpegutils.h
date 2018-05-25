@@ -33,7 +33,6 @@ AVCodecContext *m_pCodecCtx;
 AVCodec *m_pAVCodec;
 AVCodecParserContext *m_pCodecPaser;
 
-uint8_t *buffer = NULL;
 struct SwsContext *sws_ctx = NULL;
 
 //FIX
